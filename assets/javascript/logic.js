@@ -152,7 +152,7 @@ var SynthPad = (function() {
   
   
   // Initialize the page.
-  window.onload = function() {
-    var synthPad = new SynthPad();
-  }
+  // window.onload = function() {
+  //   var synthPad = new SynthPad();
+  // }
   

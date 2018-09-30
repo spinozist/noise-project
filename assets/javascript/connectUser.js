@@ -1,10 +1,10 @@
 
 
 window.onload = function () {
-    var synthPad = new SynthPad();
 
 
     $(`#user-you`).on(`click`, function () {
+    var synthPad = new SynthPad();
 
 
         // Initialize Firebase
