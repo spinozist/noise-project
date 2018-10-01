@@ -129,7 +129,7 @@ var SynthPad = (function() {
     
       oscillator.frequency.value = noteValue;
       gainNode.gain.value = volumeValue;
-    
+
       frequencyLabel.innerHTML = Math.floor(noteValue) + ' Hz';
       volumeLabel.innerHTML = Math.floor(volumeValue * 100) + '%';
     };
