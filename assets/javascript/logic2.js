@@ -23,9 +23,13 @@ window.onload = function () {
 
     var createButtons = function (){
         for (i = 0; i < 3; i++) {
-            var button = $(`<button>`);
-            button.attr(`class`,`btn-floating btn-large waves-effect waves-light red`);
-            button.attr(`id`,`play-${i}`)
+            var button = $(`<a>`);
+            button.attr(`class`,`btn-floating btn-large waves-effect waves-light red`)
+                .attr(`id`,`play-${i}`)
+                .html(`
+                <i class="material-icons">
+                play_circle_outline</i>`);
+
             $(`#user-buttons`).append(button);
 
             $(`#play-${i}`).on(`click`, function () {
