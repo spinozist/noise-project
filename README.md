@@ -20,7 +20,7 @@ Firebase:
 
 
 Task assignments:
-* Erik Woodworth - WebAudio source integration and other parameter functions
+* Erik Woodworth - Firebase integration
 * AJ Jordan - WebAudio ossilator and other parameter fucntions 
 * Hayden Estes - visual design layout, user validation
 
@@ -29,28 +29,33 @@ UI/Code Logic:
 * Click submit
     - add "hidden" class to <input> and <button id="submit button">
     - remove "hidden" class from UI container
-    - add buttons to "button-box" for each connected user (including self)
-        *  add id = id 
-        *  add text with user's input name
-        *  add value =`${connectedUserKey}` value
-        *  add `off` status
+    - initiate Firebase connection
+        * create myConnectionKey variable 
+    - add buttons to "button-box" for each connected user
+        * add id = `play-${connectionKey}` 
+        * add text with user's input name
+        * add value =`${connectionKey}` value
+        * add `off` status
 * Click user button (if status=`off`)
     - change status to `on`
     - create audioContext = `audioCtx-${this.val()}`
-        * SEE Diagram
-    - add listener for value change on Firebase in `/connectedUsers/${connectedUserKey}` to change parameter values in created audioContext
-        * mousedown or touchdown boolean
+    - add a listener in `audioCtx-${this.val()}` for value changes on Firebase in `/connectedUsers/${connectedUserKey}` to change parameter values in created audioContext
+        * touchStatus boolean
         * oscilator params
         * audioSource params
-    - if mousedown or touchdown = `true`
+    - if touchStatus = `true`
         * call the function audioCtx-${connectedUserKey}.play()
-    - if mousedown or touchdown = `false`
+    - if touchStatus = `false`
         * call the function audioCtx-${connectedUserKey}.stop()
 * Click user button (if status=`on`)
     - change status to `off`
     - call the function audioCtx-${connectedUserKey}.stop()
     - turn off listener to Firebase
+* On mousedown or touchdown in trackpad area
+    - call TouchPad function to set values on Firebase in `/connectedUsers/${connectedUserKey}`
+        * SEE DIAGRAM
+* On mouseup or touchup in trackpad area
+    - set touchStatus = `false`
 * When user disconnects
     - delete button with id = `play-${connectedUserKey}`
     - remove `/connectedUsers/${connectedUserKey}` from Firebase
-
