@@ -83,7 +83,7 @@ window.onload = function () {
 
             // Create an audio context.
             window.AudioContext = window.AudioContext || window.webkitAudioContext;
-            AudioContext = new window.AudioContext();
+            myAudioContext = new window.AudioContext();
 
             SynthPad.setupEventListeners();
         };
