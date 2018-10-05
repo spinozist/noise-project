@@ -52,4 +52,5 @@ UI/Code Logic:
     - turn off listener to Firebase
 * When user disconnects
     - delete button with id = `play-${connectedUserKey}`
+    - remove `/connectedUsers/${connectedUserKey}` from Firebase
 
