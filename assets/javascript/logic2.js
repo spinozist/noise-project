@@ -40,7 +40,6 @@ window.onload = function () {
 
     createButtons();
 
-
     // When the client's connection state changes...
 
     connectedRef.on("value", function (snapshot) {
