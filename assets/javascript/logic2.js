@@ -4,6 +4,7 @@ window.onload = function () {
     var frequency = 0;
     var gain = 0;
 
+    var myConnectionKey = "";
     var connectionKeys = [];
 
     // Initialize Firebase
@@ -49,16 +50,31 @@ window.onload = function () {
     // });
 
     var createButtons = function () {
+
+        myConnectionKey = connectionLog.push().key;
+
+        database.ref(`/connectedUsers/${myConnectionKey}/`).set({
+            param1: "",
+            param2: "",
+        });
+
+        connectionKeys.push(myConnectionKey);
+
+
         for (i = 0; i < 2; i++) {
+            // Replace the function below with one that pulls from Firebase by index value
             var connectionKey = connectionLog.push().key
+
             connectionKeys.push(connectionKey);
 
-            database.ref(`/connectedUsers/${connectionKeys[i]}/`).set({
-                param1: "",
-                param2: "",
-            });
+            // database.ref(`/connectedUsers/${connectionKeys[i]}/`).set({
+            //     param1: "",
+            //     param2: "",
+            // });
 
             database.ref(`/connectedUsers/${connectionKeys[i]}/`).onDisconnect().remove()
+
+            //Add functions to remove the key from the connectionKeys array and the button from the button-box
 
 
             var button = $(`<a>`);
@@ -72,6 +88,16 @@ window.onload = function () {
             $(`#user-buttons`).append(button);
 
             $(`#play-${connectionKeys[i]}`).on(`click`, function () {
+
+                
+
+                // ENCLOSE SynthPad functions in conditionals
+                // If myConnectionKey === $(this).attr(`value`)
+                // Record to Firebase (from TrackPad to Firebase)
+                // Play from Firebase (from Firebase to Destination)
+
+                // Else
+                // Play from Firebase (Note: No Trackpad Functions here)
 
                 var connectionKey = $(this).attr(`value`);
 
