@@ -156,11 +156,13 @@ window.onload = function () {
                         gainNode.connect(myAudioContext.destination);
                         oscillator.connect(gainNode);
 
+                        touchStatus = true;
+
+
                         SynthPad.updateFrequency(event);
 
                         oscillator.start(0);
 
-                        touchStatus = true;
 
                         myCanvas.addEventListener('mousemove', SynthPad.updateFrequency);
                         myCanvas.addEventListener('touchmove', SynthPad.updateFrequency);
@@ -173,6 +175,7 @@ window.onload = function () {
                     SynthPad.stopSound = function (event) {
 
                         touchStatus = false;
+                        
                         oscillator.stop(0);
                         SynthPad.updateFrequency();
 
