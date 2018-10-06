@@ -164,7 +164,7 @@ window.onload = function () {
 
                         myCanvas.addEventListener('mousemove', SynthPad.updateFrequency);
                         myCanvas.addEventListener('touchmove', SynthPad.updateFrequency);
-
+                        myCanvas.addEventListener('touchend', SynthPad.stopSound);
                         myCanvas.addEventListener('mouseout', SynthPad.stopSound);
                     };
 
@@ -172,10 +172,8 @@ window.onload = function () {
                     // Stop the audio.
                     SynthPad.stopSound = function (event) {
 
-                        oscillator.stop(0);
-
                         touchStatus = false;
-
+                        oscillator.stop(0);
                         SynthPad.updateFrequency();
 
                         myCanvas.removeEventListener('mousemove', SynthPad.updateFrequency);
@@ -228,6 +226,10 @@ window.onload = function () {
                         } else if (event.type == 'touchstart' || event.type == 'touchmove') {
                             var touch = event.touches[0];
                             SynthPad.calculateFrequency(touch.pageX, touch.pageY);
+                        }
+
+                        else if (event.type == `touchend`  || event.type == 'mouseout') {
+                            SynthPad.calculateFrequency();
                         }
                     };
 
