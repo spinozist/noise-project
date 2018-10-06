@@ -178,6 +178,7 @@ window.onload = function () {
 
                         myCanvas.removeEventListener('mousemove', SynthPad.updateFrequency);
                         myCanvas.removeEventListener('touchmove', SynthPad.updateFrequency);
+                        myCanvas.removeEventListener('touchend', SynthPad.stopSound);
                         myCanvas.removeEventListener('mouseout', SynthPad.stopSound);
                     };
 
