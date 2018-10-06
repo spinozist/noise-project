@@ -1,10 +1,9 @@
 window.onload = function () {
 
-    var touchStatus = false;
-    var frequency = 0;
-    var gain = 0;
+    var myTouchStatus = false;
+    var myFrequency = 0;
+    var myGain = 0;
 
-    var myConnectionKey = "";
     var connectionKeys = [];
 
     // Initialize Firebase
@@ -25,6 +24,8 @@ window.onload = function () {
     var connectionLog = database.ref(`/connectedUsers`);
 
     var connectedRef = database.ref(".info/connected");
+
+    var myConnectionKey = connectionLog.push().key;
 
     // var connectionKey;
 
@@ -51,26 +52,20 @@ window.onload = function () {
 
     var createButtons = function () {
 
-        myConnectionKey = connectionLog.push().key;
-
-        database.ref(`/connectedUsers/${myConnectionKey}/`).set({
-            param1: "",
-            param2: "",
-        });
-
         connectionKeys.push(myConnectionKey);
 
-
         for (i = 0; i < 2; i++) {
-            // Replace the function below with one that pulls from Firebase by index value
-            var connectionKey = connectionLog.push().key
+
+            // **Define by indexing through Firebaxe
+            var connectionKey = `test${i}`;
 
             connectionKeys.push(connectionKey);
 
-            // database.ref(`/connectedUsers/${connectionKeys[i]}/`).set({
-            //     param1: "",
-            //     param2: "",
-            // });
+            database.ref(`/connectedUsers/${connectionKeys[i]}/`).set({
+                touchStatus: false,
+                param1: "",
+                param2: "",
+            });
 
             database.ref(`/connectedUsers/${connectionKeys[i]}/`).onDisconnect().remove()
 
@@ -90,19 +85,22 @@ window.onload = function () {
             $(`#play-${connectionKeys[i]}`).on(`click`, function () {
 
                 
-
-                // ENCLOSE SynthPad functions in conditionals
                 // If myConnectionKey === $(this).attr(`value`)
-                // Record to Firebase (from TrackPad to Firebase)
-                // Play from Firebase (from Firebase to Destination)
+
+                // **TrackPad Listener --> TrackPad input function to Firebase data
+                // **Firebase Listener --> Firebase data for myConnectKey to PlaySound function.
 
                 // Else
-                // Play from Firebase (Note: No Trackpad Functions here)
+                // **Firebase Listener --> Firebase data for $(this).val() to PlaySound function.
 
                 var connectionKey = $(this).attr(`value`);
+                var touchStatus = false;
+
+                
+                // Break into TrackPad listener and Firebase Listener functions
 
                 var SynthPad = (function () {
-                    // Variables
+                    // ***GLOBAL
                     var myCanvas;
                     var frequencyLabel;
                     var volumeLabel;
@@ -146,6 +144,8 @@ window.onload = function () {
                     };
 
 
+
+
                     // Play a note.
                     SynthPad.playSound = function (event) {
                         oscillator = myAudioContext.createOscillator();
@@ -160,6 +160,8 @@ window.onload = function () {
 
                         oscillator.start(0);
 
+                        touchStatus = true;
+
                         myCanvas.addEventListener('mousemove', SynthPad.updateFrequency);
                         myCanvas.addEventListener('touchmove', SynthPad.updateFrequency);
 
@@ -169,7 +171,12 @@ window.onload = function () {
 
                     // Stop the audio.
                     SynthPad.stopSound = function (event) {
+
                         oscillator.stop(0);
+
+                        touchStatus = false;
+
+                        SynthPad.updateFrequency();
 
                         myCanvas.removeEventListener('mousemove', SynthPad.updateFrequency);
                         myCanvas.removeEventListener('touchmove', SynthPad.updateFrequency);
@@ -201,6 +208,7 @@ window.onload = function () {
                         gainNode.gain.value = volumeValue;
 
                         database.ref(`/connectedUsers/${connectionKey}`).set({
+                            touchStatus: touchStatus,
                             param1: noteValue,
                             param2: volumeValue,
                         });
@@ -216,6 +224,7 @@ window.onload = function () {
                     SynthPad.updateFrequency = function (event) {
                         if (event.type == 'mousedown' || event.type == 'mousemove') {
                             SynthPad.calculateFrequency(event.x, event.y);
+
                         } else if (event.type == 'touchstart' || event.type == 'touchmove') {
                             var touch = event.touches[0];
                             SynthPad.calculateFrequency(touch.pageX, touch.pageY);
