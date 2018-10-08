@@ -23,7 +23,7 @@ window.onload = function () {
 
     var connectionLog = database.ref(`/connectedUsers`);
 
-    var connectedRef = database.ref(".info/connected");
+    // var connectedRef = database.ref(".info/connected");
 
     var myConnectionKey = connectionLog.push().key;
 
@@ -52,25 +52,30 @@ window.onload = function () {
 
     var createButtons = function () {
 
+        database.ref(`/connectedUsers/${myConnectionKey}/`).set({
+            touchStatus: false,
+            param1: "",
+            param2: "",
+        });
+
+        database.ref(`/connectedUsers/${myConnectionKey}/`).onDisconnect().remove()
+
         connectionKeys.push(myConnectionKey);
 
-        for (i = 0; i < 2; i++) {
+        for (i = 0; i < 3; i++) {
+
+            // var firebaseRef = database.ref(`/connectedUsers/`)[i].object;
+
+            // console.log(firebaseRef);
 
             // **Define by indexing through Firebaxe
-            var connectionKey = `test${i}`;
+            var connectionKey = `test-${i}`;
+
+            console.log(connectionKey);
 
             connectionKeys.push(connectionKey);
 
-            database.ref(`/connectedUsers/${connectionKeys[i]}/`).set({
-                touchStatus: false,
-                param1: "",
-                param2: "",
-            });
-
-            database.ref(`/connectedUsers/${connectionKeys[i]}/`).onDisconnect().remove()
-
             //Add functions to remove the key from the connectionKeys array and the button from the button-box
-
 
             var button = $(`<a>`);
             button.attr(`class`, `btn-floating btn-large waves-effect waves-light red`)
@@ -84,7 +89,7 @@ window.onload = function () {
 
             $(`#play-${connectionKeys[i]}`).on(`click`, function () {
 
-                
+
                 // If myConnectionKey === $(this).attr(`value`)
 
                 // **TrackPad Listener --> TrackPad input function to Firebase data
@@ -96,7 +101,7 @@ window.onload = function () {
                 var connectionKey = $(this).attr(`value`);
                 var touchStatus = false;
 
-                
+
                 // Break into TrackPad listener and Firebase Listener functions
 
                 var SynthPad = (function () {
@@ -135,12 +140,21 @@ window.onload = function () {
                             event.preventDefault();
                         }, false);
 
-                        myCanvas.addEventListener('mousedown', SynthPad.playSound);
-                        myCanvas.addEventListener('touchstart', SynthPad.playSound);
+                        if (myConnectionKey === connectionKey) {
 
-                        myCanvas.addEventListener('mouseup', SynthPad.stopSound);
-                        document.addEventListener('mouseleave', SynthPad.stopSound);
-                        myCanvas.addEventListener('touchend', SynthPad.stopSound);
+                            myCanvas.addEventListener('mousedown', SynthPad.playSound);
+                            myCanvas.addEventListener('touchstart', SynthPad.playSound);
+
+                            myCanvas.addEventListener('mouseup', SynthPad.stopSound);
+                            document.addEventListener('mouseleave', SynthPad.stopSound);
+                            myCanvas.addEventListener('touchend', SynthPad.stopSound);
+
+                        }
+
+                        // else {
+                        //         ***listen for change on value on firebase***
+                        //     }
+                        // }                            
                     };
 
 
@@ -156,32 +170,50 @@ window.onload = function () {
                         gainNode.connect(myAudioContext.destination);
                         oscillator.connect(gainNode);
 
-                        touchStatus = true;
+                        if (myConnectionKey === connectionKey) {
+                            touchStatus = true;
+                            oscillator.start(0);
 
+                            myCanvas.addEventListener('mousemove', SynthPad.updateFrequency);
+                            myCanvas.addEventListener('touchmove', SynthPad.updateFrequency);
+                            myCanvas.addEventListener('touchend', SynthPad.stopSound);
+                            myCanvas.addEventListener('mouseout', SynthPad.stopSound);
+                        }
+
+                        // else {
+                        //     touchStatus = database.ref(`/connectedUsers/${connectionKey}`).touchStatus;
+                        //     if (touchStatus = true) {
+                        //         oscillator.start(0);
+                        //         ***listen for change in value on firebase***
+                        //     }
+                        // }
 
                         SynthPad.updateFrequency(event);
 
-                        oscillator.start(0);
-
-
-                        myCanvas.addEventListener('mousemove', SynthPad.updateFrequency);
-                        myCanvas.addEventListener('touchmove', SynthPad.updateFrequency);
-                        myCanvas.addEventListener('touchend', SynthPad.stopSound);
-                        myCanvas.addEventListener('mouseout', SynthPad.stopSound);
                     };
-
 
                     // Stop the audio.
                     SynthPad.stopSound = function (event) {
+                        if (myConnectionKey === connectionKey) {
 
-                        touchStatus = false;
-                        oscillator.stop(0);
-                        SynthPad.updateFrequency();
+                            touchStatus = false;
+                            oscillator.stop(0);
+                            SynthPad.updateFrequency();
 
-                        myCanvas.removeEventListener('mousemove', SynthPad.updateFrequency);
-                        myCanvas.removeEventListener('touchmove', SynthPad.updateFrequency);
-                        myCanvas.removeEventListener('touchend', SynthPad.stopSound);
-                        myCanvas.removeEventListener('mouseout', SynthPad.stopSound);
+                            myCanvas.removeEventListener('mousemove', SynthPad.updateFrequency);
+                            myCanvas.removeEventListener('touchmove', SynthPad.updateFrequency);
+                            myCanvas.removeEventListener('touchend', SynthPad.stopSound);
+                            myCanvas.removeEventListener('mouseout', SynthPad.stopSound);
+
+                        }
+
+                        // else {
+                        //     touchStatus = database.ref(`/connectedUsers/${connectionKey}`).touchStatus;  
+                        //     if (touchStatus = false) {
+                        //         ***listen for change on value on firebase***
+                        //     }
+                        // } 
+
                     };
 
 
@@ -199,10 +231,7 @@ window.onload = function () {
                         return volumeLevel;
                     };
 
-
-
-
-                    // Fetch the new frequency and volume.
+                    // Fetch the new frequency and volume LOCAL.
                     SynthPad.calculateFrequency = function (x, y) {
                         var noteValue = SynthPad.calculateNote(x);
                         var volumeValue = SynthPad.calculateVolume(y);
@@ -210,29 +239,38 @@ window.onload = function () {
                         oscillator.frequency.value = noteValue;
                         gainNode.gain.value = volumeValue;
 
+
                         database.ref(`/connectedUsers/${connectionKey}`).set({
                             touchStatus: touchStatus,
                             param1: noteValue,
                             param2: volumeValue,
                         });
 
-                        // console.log(connectionKey);
-
                         frequencyLabel.innerHTML = Math.floor(noteValue) + ' Hz';
                         volumeLabel.innerHTML = Math.floor(volumeValue * 100) + '%';
                     };
 
+                    // Fetch the new frequency and volume REMOTE.
+                    SynthPad.calculateRemoteFrequency = function () {
+                        var noteValue = database.ref(`/connectedUsers`).param1;
+                        var volumeValue = database.ref(`/connectedUsers`).param2;
+
+                        oscillator.frequency.value = noteValue;
+                        gainNode.gain.value = volumeValue;
+                    }
+
 
                     // Update the note frequency.
                     SynthPad.updateFrequency = function (event) {
-                        if (event.type == 'mousedown' || event.type == 'mousemove') {
-                            SynthPad.calculateFrequency(event.x, event.y);
-
-                        } else if (event.type == 'touchstart' || event.type == 'touchmove') {
-                            var touch = event.touches[0];
-                            SynthPad.calculateFrequency(touch.pageX, touch.pageY);
+                        if (myConnectionKey === connectionKey) {
+                            if (event.type == 'mousedown' || event.type == 'mousemove') {
+                                SynthPad.calculateFrequency(event.x, event.y);
+                            } else if (event.type == 'touchstart' || event.type == 'touchmove') {
+                                var touch = event.touches[0];
+                                SynthPad.calculateFrequency(touch.pageX, touch.pageY);
+                            }
                         } else {
-                            SynthPad.calculateFrequency();
+                            SynthPad.calculateRemoteFrequency();
                         }
                     };
 
