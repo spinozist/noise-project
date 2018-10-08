@@ -175,7 +175,6 @@ window.onload = function () {
                     SynthPad.stopSound = function (event) {
 
                         touchStatus = false;
-                        
                         oscillator.stop(0);
                         SynthPad.updateFrequency();
 
@@ -199,6 +198,8 @@ window.onload = function () {
                         var volumeLevel = 1 - (((100 / myCanvas.offsetHeight) * (posY - myCanvas.offsetTop)) / 100);
                         return volumeLevel;
                     };
+
+
 
 
                     // Fetch the new frequency and volume.
@@ -230,9 +231,7 @@ window.onload = function () {
                         } else if (event.type == 'touchstart' || event.type == 'touchmove') {
                             var touch = event.touches[0];
                             SynthPad.calculateFrequency(touch.pageX, touch.pageY);
-                        }
-
-                        else if (event.type == `touchend`  || event.type == 'mouseout') {
+                        } else {
                             SynthPad.calculateFrequency();
                         }
                     };
