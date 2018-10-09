@@ -56,41 +56,54 @@ window.onload = function () {
             touchStatus: false,
             param1: "",
             param2: "",
-            connectionKey: myConnectionKey,
-
         });
 
         database.ref(`/connectedUsers/${myConnectionKey}/`).onDisconnect().remove()
 
-        connectionKeys.push(myConnectionKey);
+        // connectionKeys.push(myConnectionKey);
 
-        for (i = 0; i < 3; i++) {
+        // for (i = 0; i < 3; i++) {
 
-            // var firebaseRef = database.ref(`/connectedUsers/`)[i].object;
+        // var firebaseRef = database.ref(`/connectedUsers/`)[i].object;
 
-            // console.log(firebaseRef);
+        // console.log(firebaseRef);
 
-            // **Define by indexing through Firebaxe
-            var connectionKey = `test-${i}`;
+        // **Define by indexing through Firebase
 
-            console.log(connectionKeys[i]);
+        connectionLog.on(`child_added`, function (childSnapshot) {
 
-            connectionKeys.push(connectionKey);
+            var connectionKey = childSnapshot.key;
 
-            //Add functions to remove the key from the connectionKeys array and the button from the button-box
+            console.log(connectionKey);
+            if (myConnectionKey === connectionKey) {
 
-            var button = $(`<a>`);
-            button.attr(`class`, `btn-floating btn-large waves-effect waves-light red`)
-                .attr(`id`, `play-${connectionKeys[i]}`)
-                .attr(`value`, connectionKeys[i])
-                .html(`
+
+                var button = $(`<a>`).css(`margin-left`, `10px`);
+                button.attr(`class`, `btn-floating btn-large waves-effect pulse waves-light red`)
+                    .attr(`id`, `play-${connectionKey}`)
+                    .attr(`value`, connectionKey)
+                    .html(`
                 <i class="material-icons">
                 play_circle_outline</i>`)
-                
 
-            $(`#user-buttons`).append(button);
+                $(`#user-buttons`).append(button);
 
-            $(`#play-${connectionKeys[i]}`).on(`click`, function () {
+            }
+
+            else {
+                var button = $(`<a>`).css(`margin-left`, `10px`);
+                button.attr(`class`, `btn-floating btn-large waves-effect waves-light red`)
+                    .attr(`id`, `play-${connectionKey}`)
+                    .attr(`value`, connectionKey)
+                    .html(`
+                <i class="material-icons">
+                play_circle_outline</i>`)
+
+                $(`#user-buttons`).append(button);
+
+            }
+
+            $(`#play-${connectionKey}`).on(`click`, function () {
 
 
                 // If myConnectionKey === $(this).attr(`value`)
@@ -283,7 +296,9 @@ window.onload = function () {
                 })();
                 var synthPad = new SynthPad();
             });
-        }
+        });
+
+
     }
     createButtons();
 
