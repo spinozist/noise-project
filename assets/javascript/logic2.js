@@ -56,6 +56,8 @@ window.onload = function () {
             touchStatus: false,
             param1: "",
             param2: "",
+            connectionKey: myConnectionKey,
+
         });
 
         database.ref(`/connectedUsers/${myConnectionKey}/`).onDisconnect().remove()
@@ -71,7 +73,7 @@ window.onload = function () {
             // **Define by indexing through Firebaxe
             var connectionKey = `test-${i}`;
 
-            console.log(connectionKey);
+            console.log(connectionKeys[i]);
 
             connectionKeys.push(connectionKey);
 

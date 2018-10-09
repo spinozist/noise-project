@@ -13,8 +13,8 @@ html, body {
   overflow: auto;
   height: 350px;
   width: 500px;
+  border-radius: 5%;
   
-
 };
 
 
