@@ -85,7 +85,8 @@ window.onload = function () {
                 .attr(`value`, connectionKeys[i])
                 .html(`
                 <i class="material-icons">
-                play_circle_outline</i>`);
+                play_circle_outline</i>`)
+                
 
             $(`#user-buttons`).append(button);
 
@@ -148,7 +149,7 @@ window.onload = function () {
                             myCanvas.addEventListener('touchstart', SynthPad.playSound);
 
                             myCanvas.addEventListener('mouseup', SynthPad.stopSound);
-                            document.addEventListener('mouseleave', SynthPad.stopSound);
+                            myCanvas.addEventListener('mouseleave', SynthPad.stopSound);
                             myCanvas.addEventListener('touchend', SynthPad.stopSound);
 
                         }
