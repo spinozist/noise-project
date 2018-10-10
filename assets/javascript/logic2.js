@@ -120,12 +120,12 @@ window.onload = function () {
                 var touchStatus = false;
                 var remoteNoteValue;
                 var remoteVolumeLevel;
-                var remotetouchStatus;
+                var remoteTouchStatus = false;
 
                 database.ref(`/connectedUsers/${connectionKey}`).on(`value`, function (childSnapshot) {
                     remoteNoteValue = childSnapshot.val().param1;
                     remoteVolumeLevel = childSnapshot.val().param2;
-                    remotetouchStatus = childSnapshot.val().touchStatus;
+                    remoteTouchStatus = childSnapshot.val().touchStatus;
                 });
 
 
@@ -180,14 +180,18 @@ window.onload = function () {
 
                         }
 
-                        // else {
-                        //         ***listen for change on value on firebase***
-                        //     }
-                        // }                            
+                        else {
+
+                            database.ref(`/connectedUsers/${connectionKey}`).on(`value`, function () {
+                                if (remoteTouchStatus = true) {
+                                    SynthPad.playSound();
+                                }
+                                else {
+                                    SynthPad.stopSound();
+                                }
+                            });
+                        }
                     };
-
-
-
 
                     // Play a note.
                     SynthPad.playSound = function (event) {
@@ -201,9 +205,6 @@ window.onload = function () {
 
                         if (myConnectionKey === connectionKey) {
                             touchStatus = true;
-                            oscillator.start(0);
-                            SynthPad.updateFrequency(event);
-
 
                             myCanvas.addEventListener('mousemove', SynthPad.updateFrequency);
                             myCanvas.addEventListener('touchmove', SynthPad.updateFrequency);
@@ -211,16 +212,8 @@ window.onload = function () {
                             myCanvas.addEventListener('mouseout', SynthPad.stopSound);
                         }
 
-                        // else {
-                        //     touchStatus = database.ref(`/connectedUsers/${connectionKey}`).touchStatus;
-                        //     if (touchStatus = true) {
-                        //         oscillator.start(0);
-                        //         ***listen for change in value on firebase***
-                        //     }
-                        // }
-
+                        oscillator.start(0);
                         SynthPad.updateFrequency(event);
-
                     };
 
                     // Stop the audio.
@@ -228,8 +221,6 @@ window.onload = function () {
                         if (myConnectionKey === connectionKey) {
 
                             touchStatus = false;
-                            oscillator.stop(0);
-                            SynthPad.updateFrequency();
 
                             myCanvas.removeEventListener('mousemove', SynthPad.updateFrequency);
                             myCanvas.removeEventListener('touchmove', SynthPad.updateFrequency);
@@ -238,12 +229,8 @@ window.onload = function () {
 
                         }
 
-                        // else {
-                        //     touchStatus = database.ref(`/connectedUsers/${connectionKey}`).touchStatus;  
-                        //     if (touchStatus = false) {
-                        //         ***listen for change on value on firebase***
-                        //     }
-                        // } 
+                        oscillator.stop(0);
+                        SynthPad.updateFrequency();
 
                     };
 
