@@ -140,6 +140,17 @@ window.onload = function () {
                         myAudioContext = new window.AudioContext();
 
                         SynthPad.setupEventListeners();
+
+                        database.ref(`/connectedUsers/${connectionKey}`).on(`value`, function () {
+
+                            if (remoteTouchStatus === true) {
+                                SynthPad.playSound();
+                            }
+    
+                            else {
+                                SynthPad.stopSound();
+                            };
+                        });
                     };
 
 
@@ -250,8 +261,8 @@ window.onload = function () {
                         }
 
                         // else {
-                            oscillator.frequency.value = remoteNoteValue;
-                            gainNode.gain.value = remoteVolumeLevel;
+                        oscillator.frequency.value = remoteNoteValue;
+                        gainNode.gain.value = remoteVolumeLevel;
                         // };
 
                         frequencyLabel.innerHTML = Math.floor(noteValue) + ' Hz';
@@ -268,6 +279,7 @@ window.onload = function () {
                                 SynthPad.calculateFrequency(touch.pageX, touch.pageY);
                             }
                             else {
+                                touchStatus = false;
                                 SynthPad.calculateFrequency();
                             }
                         }
