@@ -139,18 +139,22 @@ window.onload = function () {
                         window.AudioContext = window.AudioContext || window.webkitAudioContext;
                         myAudioContext = new window.AudioContext();
 
-                        SynthPad.setupEventListeners();
+                        if (myConnectionKey === connectionKey) {
+                            SynthPad.setupEventListeners();
+                        }
 
-                        database.ref(`/connectedUsers/${connectionKey}`).on(`value`, function () {
+                        else {
+                            database.ref(`/connectedUsers/${connectionKey}`).on(`value`, function () {
 
-                            if (remoteTouchStatus === true) {
-                                SynthPad.playSound();
-                            }
-    
-                            else {
-                                SynthPad.stopSound();
-                            };
-                        });
+                                if (remoteTouchStatus === false) {
+                                    SynthPad.stopSound();
+                                }
+
+                                else {
+                                    SynthPad.playSound();
+                                };
+                            });
+                        }
                     };
 
 
@@ -161,18 +165,18 @@ window.onload = function () {
                             event.preventDefault();
                         }, false);
 
-                        if (myConnectionKey === connectionKey) {
-                            // Disables scrolling on touch devices.
+
+                        // Disables scrolling on touch devices.
 
 
-                            myCanvas.addEventListener('mousedown', SynthPad.playSound);
-                            myCanvas.addEventListener('touchstart', SynthPad.playSound);
+                        myCanvas.addEventListener('mousedown', SynthPad.playSound);
+                        myCanvas.addEventListener('touchstart', SynthPad.playSound);
 
-                            myCanvas.addEventListener('mouseup', SynthPad.stopSound);
-                            myCanvas.addEventListener('mouseleave', SynthPad.stopSound);
-                            myCanvas.addEventListener('touchend', SynthPad.stopSound);
+                        myCanvas.addEventListener('mouseup', SynthPad.stopSound);
+                        myCanvas.addEventListener('mouseleave', SynthPad.stopSound);
+                        myCanvas.addEventListener('touchend', SynthPad.stopSound);
 
-                        }
+
 
                     };
 
