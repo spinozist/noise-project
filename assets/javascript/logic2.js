@@ -1,10 +1,6 @@
 window.onload = function () {
 
     var myTouchStatus = false;
-    var myFrequency = 0;
-    var myGain = 0;
-
-    var connectionKeys = [];
 
     // Initialize Firebase
 
@@ -171,10 +167,10 @@ window.onload = function () {
 
                             database.ref(`/connectedUsers/${connectionKey}`).on(`value`, function () {
                                 if (remoteTouchStatus = true) {
-                                    SynthPad.playSound();
+                                    SynthPad.playSound;
                                 }
                                 else {
-                                    SynthPad.stopSound();
+                                    SynthPad.stopSound;
                                 }
                             });
                         }
@@ -213,7 +209,7 @@ window.onload = function () {
                             myCanvas.removeEventListener('touchmove', SynthPad.updateFrequency);
                             myCanvas.removeEventListener('touchend', SynthPad.stopSound);
                             myCanvas.removeEventListener('mouseout', SynthPad.stopSound);
-
+                            SynthPad.updateFrequency(event);
                         }
 
                         oscillator.stop(0);
@@ -229,7 +225,6 @@ window.onload = function () {
                         return lowNote + noteOffset;
                     };
 
-
                     // Calculate the volume.
                     SynthPad.calculateVolume = function (posY) {
                         var volumeLevel = 1 - (((100 / myCanvas.offsetHeight) * (posY - myCanvas.offsetTop)) / 100);
@@ -241,11 +236,13 @@ window.onload = function () {
                         var noteValue = SynthPad.calculateNote(x);
                         var volumeValue = SynthPad.calculateVolume(y);
 
-                        database.ref(`/connectedUsers/${connectionKey}`).set({
-                            touchStatus: touchStatus,
-                            param1: noteValue,
-                            param2: volumeValue,
-                        });
+                        if (myConnectionKey === connectionKey) {
+                            database.ref(`/connectedUsers/${connectionKey}`).set({
+                                touchStatus: touchStatus,
+                                param1: noteValue,
+                                param2: volumeValue,
+                            });
+                        }
 
                         oscillator.frequency.value = remoteNoteValue;
                         gainNode.gain.value = remoteVolumeLevel;
@@ -254,16 +251,6 @@ window.onload = function () {
                         frequencyLabel.innerHTML = Math.floor(noteValue) + ' Hz';
                         volumeLabel.innerHTML = Math.floor(volumeValue * 100) + '%';
                     };
-
-                    // Fetch the new frequency and volume REMOTE.
-                    // SynthPad.calculateRemoteFrequency = function () {
-                    //     var noteValue = database.ref(`/connectedUsers`).param1;
-                    //     var volumeValue = database.ref(`/connectedUsers`).param2;
-
-                    //     oscillator.frequency.value = noteValue;
-                    //     gainNode.gain.value = volumeValue;
-                    // }
-
 
                     // Update the note frequency.
                     SynthPad.updateFrequency = function (event) {
@@ -275,7 +262,8 @@ window.onload = function () {
                                 SynthPad.calculateFrequency(touch.pageX, touch.pageY);
                             }
                         } else {
-                            SynthPad.calculateRemoteFrequency();
+                            SynthPad.calculateFrequency();
+                            //write touchStatus to Firebase
                         }
                     };
 
