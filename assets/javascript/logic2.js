@@ -75,16 +75,16 @@ window.onload = function () {
             var connectionKey = childSnapshot.key;
 
             console.log(connectionKey);
-            if (myConnectionKey === connectionKey) {
 
+            if (myConnectionKey === connectionKey) {
 
                 var button = $(`<a>`).css(`margin-left`, `10px`);
                 button.attr(`class`, `btn-floating btn-large waves-effect pulse waves-light red`)
                     .attr(`id`, `play-${connectionKey}`)
                     .attr(`value`, connectionKey)
                     .html(`
-                <i class="material-icons">
-                play_circle_outline</i>`)
+            <i class="material-icons">
+            play_circle_outline</i>`)
 
                 $(`#user-buttons`).append(button);
 
@@ -96,14 +96,16 @@ window.onload = function () {
                     .attr(`id`, `play-${connectionKey}`)
                     .attr(`value`, connectionKey)
                     .html(`
-                <i class="material-icons">
-                play_circle_outline</i>`)
+            <i class="material-icons">
+            play_circle_outline</i>`)
 
                 $(`#user-buttons`).append(button);
-
             }
 
+
             $(`#play-${connectionKey}`).on(`click`, function () {
+
+
 
 
                 // If myConnectionKey === $(this).attr(`value`)
@@ -116,6 +118,14 @@ window.onload = function () {
 
                 var connectionKey = $(this).attr(`value`);
                 var touchStatus = false;
+
+                database.ref(`/connectedUsers/${connectionKey}`).on(`value`, function (childSnapshot) {
+                    var remoteNoteValue = childSnapshot.val().param1;
+                    var remoteVolumeLevel = childSnapshot.val().param2;
+                    var remotetouchStatus = childSnapshot.val().touchStatus;
+
+                    console.log(remotetouchStatus);
+                });
 
 
                 // Break into TrackPad listener and Firebase Listener functions
@@ -252,8 +262,8 @@ window.onload = function () {
                         var noteValue = SynthPad.calculateNote(x);
                         var volumeValue = SynthPad.calculateVolume(y);
 
-                        oscillator.frequency.value = noteValue;
-                        gainNode.gain.value = volumeValue;
+                        oscillator.frequency.value = remoteNoteValue;
+                        gainNode.gain.value = remoteVolumeLevel;
 
 
                         database.ref(`/connectedUsers/${connectionKey}`).set({
