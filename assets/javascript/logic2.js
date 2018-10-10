@@ -118,14 +118,17 @@ window.onload = function () {
 
                 var connectionKey = $(this).attr(`value`);
                 var touchStatus = false;
+                var remoteNoteValue;
+                var remoteVolumeLevel;
+                var remotetouchStatus;
 
                 database.ref(`/connectedUsers/${connectionKey}`).on(`value`, function (childSnapshot) {
-                    var remoteNoteValue = childSnapshot.val().param1;
-                    var remoteVolumeLevel = childSnapshot.val().param2;
-                    var remotetouchStatus = childSnapshot.val().touchStatus;
-
-                    console.log(remotetouchStatus);
+                    remoteNoteValue = childSnapshot.val().param1;
+                    remoteVolumeLevel = childSnapshot.val().param2;
+                    remotetouchStatus = childSnapshot.val().touchStatus;
                 });
+
+
 
 
                 // Break into TrackPad listener and Firebase Listener functions
@@ -199,6 +202,8 @@ window.onload = function () {
                         if (myConnectionKey === connectionKey) {
                             touchStatus = true;
                             oscillator.start(0);
+                            SynthPad.updateFrequency(event);
+
 
                             myCanvas.addEventListener('mousemove', SynthPad.updateFrequency);
                             myCanvas.addEventListener('touchmove', SynthPad.updateFrequency);
@@ -262,28 +267,28 @@ window.onload = function () {
                         var noteValue = SynthPad.calculateNote(x);
                         var volumeValue = SynthPad.calculateVolume(y);
 
-                        oscillator.frequency.value = remoteNoteValue;
-                        gainNode.gain.value = remoteVolumeLevel;
-
-
                         database.ref(`/connectedUsers/${connectionKey}`).set({
                             touchStatus: touchStatus,
                             param1: noteValue,
                             param2: volumeValue,
                         });
 
+                        oscillator.frequency.value = remoteNoteValue;
+                        gainNode.gain.value = remoteVolumeLevel;
+
+
                         frequencyLabel.innerHTML = Math.floor(noteValue) + ' Hz';
                         volumeLabel.innerHTML = Math.floor(volumeValue * 100) + '%';
                     };
 
                     // Fetch the new frequency and volume REMOTE.
-                    SynthPad.calculateRemoteFrequency = function () {
-                        var noteValue = database.ref(`/connectedUsers`).param1;
-                        var volumeValue = database.ref(`/connectedUsers`).param2;
+                    // SynthPad.calculateRemoteFrequency = function () {
+                    //     var noteValue = database.ref(`/connectedUsers`).param1;
+                    //     var volumeValue = database.ref(`/connectedUsers`).param2;
 
-                        oscillator.frequency.value = noteValue;
-                        gainNode.gain.value = volumeValue;
-                    }
+                    //     oscillator.frequency.value = noteValue;
+                    //     gainNode.gain.value = volumeValue;
+                    // }
 
 
                     // Update the note frequency.
