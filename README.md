@@ -2,7 +2,7 @@
 
 **MULTIUSER NOISE MANIPULATOR**
 
-Audo APIs:
+Audio APIs:
 * https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API
 * http://www.sonicapi.com/
 * https://developer.spotify.com/documentation/web-api/
