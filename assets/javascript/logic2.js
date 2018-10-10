@@ -106,12 +106,6 @@ window.onload = function () {
                 var remoteVolumeLevel;
                 var remoteTouchStatus = false;
 
-                database.ref(`/connectedUsers/${connectionKey}`).on(`value`, function (childSnapshot) {
-                    remoteNoteValue = childSnapshot.val().param1;
-                    remoteVolumeLevel = childSnapshot.val().param2;
-                    remoteTouchStatus = childSnapshot.val().touchStatus;
-                });
-
 
                 var SynthPad = (function () {
 
@@ -159,11 +153,16 @@ window.onload = function () {
 
                         }
 
-                        else if (remoteTouchStatus = true) {
-                            SynthPad.playSound();
-                        } else {
-                            SynthPad.stopSound();
-                        };
+                        else {
+
+                            database.ref(`/connectedUsers/${connectionKey}`).on(`value`, function (childSnapshot) {
+                                remoteNoteValue = childSnapshot.val().param1;
+                                remoteVolumeLevel = childSnapshot.val().param2;
+                                remoteTouchStatus = childSnapshot.val().touchStatus;
+                            });
+                        }
+
+
 
                     };
 
@@ -172,14 +171,15 @@ window.onload = function () {
 
 
                         if (myConnectionKey === connectionKey) {
+                            myTouchStatus = true;
                             oscillator = myAudioContext.createOscillator();
                             gainNode = myAudioContext.createGain();
 
                             oscillator.type = 'triangle';
+                            
 
                             gainNode.connect(myAudioContext.destination);
                             oscillator.connect(gainNode);
-                            myTouchStatus = true;
                             SynthPad.updateFrequency(event);
                             oscillator.start(0);
 
@@ -206,9 +206,11 @@ window.onload = function () {
 
                     // Stop the audio.
                     SynthPad.stopSound = function (event) {
+
+                        myTouchStatus = false;
+
                         if (myConnectionKey === connectionKey) {
 
-                            myTouchStatus = false;
                             SynthPad.updateFrequency(event);
                             oscillator.stop(0);
 
@@ -225,7 +227,6 @@ window.onload = function () {
 
                     };
 
-
                     // Calculate the note frequency.
                     SynthPad.calculateNote = function (posX) {
                         var noteDifference = highNote - lowNote;
@@ -241,10 +242,10 @@ window.onload = function () {
 
                     // Fetch the new frequency and volume LOCAL.
                     SynthPad.calculateFrequency = function (x, y) {
-                        var noteValue = SynthPad.calculateNote(x);
-                        var volumeValue = SynthPad.calculateVolume(y);
 
                         if (myConnectionKey === connectionKey) {
+                            var noteValue = SynthPad.calculateNote(x);
+                            var volumeValue = SynthPad.calculateVolume(y);
 
                             oscillator.frequency.value = noteValue;
                             gainNode.gain.value = volumeValue;
@@ -278,8 +279,6 @@ window.onload = function () {
                             //write touchStatus to Firebase
                         }
                     };
-
-
                     // Export SynthPad.
                     return SynthPad;
                 })();
