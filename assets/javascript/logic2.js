@@ -106,16 +106,6 @@ window.onload = function () {
             $(`#play-${connectionKey}`).on(`click`, function () {
 
 
-
-
-                // If myConnectionKey === $(this).attr(`value`)
-
-                // **TrackPad Listener --> TrackPad input function to Firebase data
-                // **Firebase Listener --> Firebase data for myConnectKey to PlaySound function.
-
-                // Else
-                // **Firebase Listener --> Firebase data for $(this).val() to PlaySound function.
-
                 var connectionKey = $(this).attr(`value`);
                 var touchStatus = false;
                 var remoteNoteValue;
@@ -127,9 +117,6 @@ window.onload = function () {
                     remoteVolumeLevel = childSnapshot.val().param2;
                     remoteTouchStatus = childSnapshot.val().touchStatus;
                 });
-
-
-
 
                 // Break into TrackPad listener and Firebase Listener functions
 
@@ -301,16 +288,15 @@ window.onload = function () {
         });
 
 
+        connectionLog.on(`child_removed`, function (childSnapshot) {
+
+            var connectionKey = childSnapshot.key;
+
+            console.log(`Disconnected: ${connectionKey}`);
+
+            var buttonToRemove = $(`#play-${connectionKey}`);
+            buttonToRemove.remove();
+        });
     }
     createButtons();
-
-    var destroyButton = ""; //create to call on disconnect of user  
-
-    // synthpad function
-
 };
-
-    // Initialize the page.
-    // window.onload = function() {
-    //   var synthPad = new SynthPad();
-    // }
