@@ -226,7 +226,7 @@ window.onload = function () {
                             }
 
                             else if (event.type == 'touchstart' || event.type == 'touchmove') {
-                                var touch = event.touches;
+                                var touch = event.touches[0];
                                 SynthPad.calculateFrequency(touch.pageX, touch.pageY);
                             }
 
