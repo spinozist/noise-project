@@ -263,20 +263,20 @@ window.onload = function () {
                             // SynthPad.playSound();
                             // SynthPad.updateFrequency();
 
+                            // SynthPad.buildOscillator();
+
                             database.ref(`/connectedUsers/${connectionKey}`).on(`value`, function (snapshot) {
 
                                 remoteNoteValue = snapshot.val().param1;
                                 remoteVolumeLevel = snapshot.val().param2;
                                 remoteTouchStatus = snapshot.val().touch_Status;
 
-                                if (playStatus === false) {
-                                    if (remoteTouchStatus === true) {
-                                        playStatus = true;
-                                        SynthPad.playSound();
-                                    }
-                                    // SynthPad.updateFrequency();
+                                if (playStatus === false && remoteTouchStatus === true) {
+                                    playStatus = true;
+                                    SynthPad.playSound();                                    
+                                } else if (playStatus === true && remoteTouchStatus === true) {
+                                    SynthPad.updateFrequency()                                    
                                 } else {
-                                    playStatus = false;
                                     SynthPad.stopSound();
                                 };
                             });
@@ -293,11 +293,11 @@ window.onload = function () {
                         SynthPad.playSound = function () {
                             SynthPad.buildOscillator();
                             remoteOscillator.start(0);
-                            SynthPad.updateFrequency();
                         };
 
                         // Stop the audio.
                         SynthPad.stopSound = function () {
+                            playStatus = false;
                             remoteOscillator.stop(0);
                             // remoteAudioContext.close()
                             // SynthPad.updateFrequency();
