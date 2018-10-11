@@ -93,7 +93,6 @@ window.onload = function () {
 
                     if (myConnectionKey === connectionKey) {
 
-                        // var SynthPad = (function () {
 
                         var myCanvas;
                         var frequencyLabel;
@@ -248,22 +247,10 @@ window.onload = function () {
                         var remoteGainNode;
                         var playStatus = false;
 
-                        // database.ref(`/connectedUsers/${connectionKey}`).on(`value`, function (snapshot) {
-
-                        //     remoteNoteValue = snapshot.val().param1;
-                        //     remoteVolumeLevel = snapshot.val().param2;
-                        //     remoteTouchStatus = snapshot.val().touch_Status;
-                        // });
-
                         // Constructor
                         var SynthPad = function () {
                             window.AudioContext = window.AudioContext || window.webkitAudioContext;
                             remoteAudioContext = new window.AudioContext();
-
-                            // SynthPad.playSound();
-                            // SynthPad.updateFrequency();
-
-                            // SynthPad.buildOscillator();
 
                             database.ref(`/connectedUsers/${connectionKey}`).on(`value`, function (snapshot) {
 
@@ -299,8 +286,6 @@ window.onload = function () {
                         SynthPad.stopSound = function () {
                             playStatus = false;
                             remoteOscillator.stop(0);
-                            // remoteAudioContext.close()
-                            // SynthPad.updateFrequency();
                         };
 
                         // Update the note frequency.
@@ -328,6 +313,8 @@ window.onload = function () {
                                 play_circle_outline</i>
                                 `);
 
+                        // myAudioContext.close();
+
                     } else {
 
                         $(this).attr(`class`, `btn-floating btn-large waves-effect waves-light green`)
@@ -336,6 +323,8 @@ window.onload = function () {
                                 <i class="material-icons">
                                 play_circle_outline</i>
                                 `);
+                                
+                        // remoteAudioContext.close();
                     }
                 });
 
