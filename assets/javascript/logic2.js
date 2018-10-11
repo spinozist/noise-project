@@ -62,12 +62,13 @@ window.onload = function () {
             if (myConnectionKey === connectionKey) {
 
                 var button = $(`<a>`).css(`margin-left`, `10px`);
-                button.attr(`class`, `btn-floating btn-large waves-effect pulse waves-light red`)
+                button.attr(`class`, `btn-floating btn-large waves-effect pulse waves-light green`)
                     .attr(`id`, `play-${connectionKey}`)
                     .attr(`value`, connectionKey)
                     .html(`
-            <i class="material-icons">
-            play_circle_outline</i>`)
+                        <i class="material-icons">
+                        play_circle_outline</i>
+                        `);
 
                 $(`#user-buttons`).append(button);
 
@@ -75,12 +76,13 @@ window.onload = function () {
 
             else {
                 var button = $(`<a>`).css(`margin-left`, `10px`);
-                button.attr(`class`, `btn-floating btn-large waves-effect waves-light red`)
+                button.attr(`class`, `btn-floating btn-large waves-effect waves-light green`)
                     .attr(`id`, `play-${connectionKey}`)
                     .attr(`value`, connectionKey)
                     .html(`
-            <i class="material-icons">
-            play_circle_outline</i>`)
+                        <i class="material-icons">
+                        play_circle_outline</i>
+                        `);
 
                 $(`#user-buttons`).append(button);
             }
@@ -88,9 +90,27 @@ window.onload = function () {
 
             $(`#play-${connectionKey}`).on(`click`, function () {
 
-
                 var connectionKey = $(this).attr(`value`);
 
+                if (myConnectionKey === connectionKey) {
+
+                    $(this).attr(`class`, `btn-floating btn-large waves-effect pulse waves-light red`)
+                        .attr(`id`, `pause-${connectionKey}`)
+                        .html(`
+                            <i class="material-icons">
+                            pause_circle_outline</i>
+                            `);
+
+                } else {
+
+                    $(this).attr(`class`, `btn-floating btn-large waves-effect waves-light red`)
+                        .attr(`id`, `pause-${connectionKey}`)
+                        .html(`
+                            <i class="material-icons">
+                            pause_circle_outline</i>
+                            `);
+
+                }
 
                 var SynthPad = (function () {
 
@@ -130,7 +150,7 @@ window.onload = function () {
                         // Event Listeners
                         SynthPad.setupEventListeners = function () {
 
-                            document.body.addEventListener('touchmove', function (event) {
+                            document.addEventListener('touchmove', function (event) {
                                 event.preventDefault();
                             }, false);
 
@@ -222,10 +242,12 @@ window.onload = function () {
                         SynthPad.updateFrequency = function (event) {
 
                             if (event.type == 'mousedown' || event.type == 'mousemove') {
+                                touchStatus = true;
                                 SynthPad.calculateFrequency(event.x, event.y);
                             }
 
                             else if (event.type == 'touchstart' || event.type == 'touchmove') {
+                                touchStatus = true;
                                 var touch = event.touches[0];
                                 SynthPad.calculateFrequency(touch.pageX, touch.pageY);
                             }
@@ -243,7 +265,7 @@ window.onload = function () {
 
                         var remoteNoteValue;
                         var remoteVolumeValue;
-                        var remoteTouchStatus;
+                        var remoteTouchStatus = false;
                         var remoteAudioContext;
                         var remoteOscillator;
                         var remoteGainNode;
@@ -264,6 +286,8 @@ window.onload = function () {
 
                                 if (remoteTouchStatus === false) {
                                     SynthPad.stopSound();
+                                    remoteAudioContext.close();
+
                                 }
 
                                 else {
@@ -301,24 +325,52 @@ window.onload = function () {
                         // Export SynthPad.
                         return SynthPad;
                     }
+
                 })();
 
-                var synthPad = new SynthPad();
+                SynthPad();
 
+                $(`#pause-${connectionKey}`).on(`click`, function () {
+
+                    if (myConnectionKey === connectionKey) {
+
+                        $(this).attr(`class`, `btn-floating btn-large waves-effect pulse waves-light green`)
+                            .attr(`id`, `play-${connectionKey}`)
+                            .html(`
+                                <i class="material-icons">
+                                play_circle_outline</i>
+                                `);
+
+                    } else {
+
+                        $(this).attr(`class`, `btn-floating btn-large waves-effect waves-light green`)
+                            .attr(`id`, `play-${connectionKey}`)
+                            .html(`
+                                <i class="material-icons">
+                                play_circle_outline</i>
+                                `);
+                    }
+                });
+
+            });
+
+            connectionLog.on(`child_removed`, function (childSnapshot) {
+
+                var connectionKey = childSnapshot.key;
+
+                console.log(`Disconnected: ${connectionKey}`);
+
+                var buttonToRemove = $(`#play-${connectionKey}`);
+                var otherButtonToRemove = $(`#pause-${connectionKey}`);
+
+                otherButtonToRemove.remove();
+                buttonToRemove.remove();
             });
 
         });
 
 
-        connectionLog.on(`child_removed`, function (childSnapshot) {
 
-            var connectionKey = childSnapshot.key;
-
-            console.log(`Disconnected: ${connectionKey}`);
-
-            var buttonToRemove = $(`#play-${connectionKey}`);
-            buttonToRemove.remove();
-        });
     }
     createButtons();
 };
