@@ -280,7 +280,7 @@ window.onload = function () {
                             remoteOscillator.type = 'triangle';
                             remoteGainNode.connect(remoteAudioContext.destination);
                             remoteOscillator.connect(remoteGainNode);
-                            
+
                             remoteOscillator.start(0);
                             SynthPad.updateFrequency();
 
@@ -300,7 +300,7 @@ window.onload = function () {
 
                         // Export SynthPad.
                         return SynthPad;
-s                    }
+                    }
                 })();
 
                 var synthPad = new SynthPad();
