@@ -19,29 +19,6 @@ window.onload = function () {
 
     var myConnectionKey = connectionLog.push().key;
 
-    // var connectionKey;
-
-    // When the client's connection state changes...
-
-    // connectedRef.on("value", function (snapshot) {
-
-    //     // If they are connected..
-    //     if (snapshot.val()) {
-
-
-    //         connectionKey = connectionLog.push().key;
-
-    //         console.log(connectionLog);
-
-    //         console.log(connectionKey);
-
-    //         // var synthPad = new SynthPad();
-
-    //         connection.onDisconnect().remove()
-
-    //     }
-    // });
-
     var createButtons = function () {
 
         database.ref(`/connectedUsers/${myConnectionKey}/`).set({
@@ -195,15 +172,15 @@ window.onload = function () {
 
                             oscillator.stop(0);
 
+                            SynthPad.calculateFrequency();
+
+
                             myCanvas.removeEventListener('mousemove', SynthPad.updateFrequency);
                             myCanvas.removeEventListener('touchmove', SynthPad.updateFrequency);
                             myCanvas.removeEventListener('touchend', SynthPad.stopSound);
                             myCanvas.removeEventListener('mouseout', SynthPad.stopSound);
 
                             SynthPad.updateFrequency(event);
-
-
-
                         };
 
                         // Calculate the note frequency.
@@ -242,19 +219,19 @@ window.onload = function () {
                         SynthPad.updateFrequency = function (event) {
 
                             if (event.type == 'mousedown' || event.type == 'mousemove') {
-                                touchStatus = true;
+                                // touchStatus = true;
                                 SynthPad.calculateFrequency(event.x, event.y);
                             }
 
                             else if (event.type == 'touchstart' || event.type == 'touchmove') {
-                                touchStatus = true;
+                                // touchStatus = true;
                                 var touch = event.touches[0];
                                 SynthPad.calculateFrequency(touch.pageX, touch.pageY);
                             }
 
                             else {
                                 touchStatus = false;
-                                SynthPad.calculateFrequency();
+                                SynthPad.calculateFrequency(0, 0);
                             }
 
                         };
@@ -265,59 +242,69 @@ window.onload = function () {
 
                         var remoteNoteValue;
                         var remoteVolumeValue;
-                        var remoteTouchStatus = false;
+                        var remoteTouchStatus;
                         var remoteAudioContext;
                         var remoteOscillator;
                         var remoteGainNode;
+                        var playStatus = false;
 
-                        database.ref(`/connectedUsers/${connectionKey}`).on(`value`, function (childSnapshot) {
-                            remoteNoteValue = childSnapshot.val().param1;
-                            remoteVolumeLevel = childSnapshot.val().param2;
-                            remoteTouchStatus = childSnapshot.val().touch_Status;
-                        });
+                        // database.ref(`/connectedUsers/${connectionKey}`).on(`value`, function (snapshot) {
+
+                        //     remoteNoteValue = snapshot.val().param1;
+                        //     remoteVolumeLevel = snapshot.val().param2;
+                        //     remoteTouchStatus = snapshot.val().touch_Status;
+                        // });
 
                         // Constructor
                         var SynthPad = function () {
-
                             window.AudioContext = window.AudioContext || window.webkitAudioContext;
                             remoteAudioContext = new window.AudioContext();
 
-                            database.ref(`/connectedUsers/${connectionKey}`).on(`value`, function () {
+                            // SynthPad.playSound();
+                            // SynthPad.updateFrequency();
 
-                                if (remoteTouchStatus === false) {
+                            database.ref(`/connectedUsers/${connectionKey}`).on(`value`, function (snapshot) {
+
+                                remoteNoteValue = snapshot.val().param1;
+                                remoteVolumeLevel = snapshot.val().param2;
+                                remoteTouchStatus = snapshot.val().touch_Status;
+
+                                if (playStatus === false) {
+                                    if (remoteTouchStatus === true) {
+                                        playStatus = true;
+                                        SynthPad.playSound();
+                                    }
+                                    // SynthPad.updateFrequency();
+                                } else {
+                                    playStatus = false;
                                     SynthPad.stopSound();
-                                    remoteAudioContext.close();
-
-                                }
-
-                                else {
-                                    SynthPad.playSound();
-                                    SynthPad.updateFrequency();
                                 };
                             });
                         };
 
-                        SynthPad.playSound = function () {
-
+                        SynthPad.buildOscillator = function () {
                             remoteOscillator = remoteAudioContext.createOscillator();
                             remoteGainNode = remoteAudioContext.createGain();
                             remoteOscillator.type = 'triangle';
                             remoteGainNode.connect(remoteAudioContext.destination);
                             remoteOscillator.connect(remoteGainNode);
+                        };
 
+                        SynthPad.playSound = function () {
+                            SynthPad.buildOscillator();
                             remoteOscillator.start(0);
                             SynthPad.updateFrequency();
-
                         };
 
                         // Stop the audio.
                         SynthPad.stopSound = function () {
                             remoteOscillator.stop(0);
-                            SynthPad.updateFrequency();
+                            // remoteAudioContext.close()
+                            // SynthPad.updateFrequency();
                         };
 
                         // Update the note frequency.
-                        SynthPad.updateFrequency = function (event) {
+                        SynthPad.updateFrequency = function () {
                             remoteOscillator.frequency.value = remoteNoteValue;
                             remoteGainNode.gain.value = remoteVolumeValue;
                         };
