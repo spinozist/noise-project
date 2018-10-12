@@ -1,20 +1,35 @@
 /* possible trackpad */
 
 html, body {
+  text-align: center;
 
   background: #111;
 
-};  
+} 
 
 
 #touchpad, img {
 
-  position: absolute;
+  /* position: absolute;
   overflow: auto;
   height: 350px;
-  width: 500px;
+  width: 500px; */
   border-radius: 5%;
   
-};
+}
 
+.type {
+  color: red;
+  width: 15%;
+  border-color: red;
+  border-radius: 5px;
+  background-color: #111;
+}
 
+.type:focus {
+  color: #111;
+  width: 15%;
+  border-color: red;
+  border-radius: 5px;
+  background-color: red;
+}

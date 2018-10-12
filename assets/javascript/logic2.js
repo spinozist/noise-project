@@ -19,12 +19,20 @@ window.onload = function () {
 
     var myConnectionKey = connectionLog.push().key;
 
+    var type = "sine";
+    
+    $(`.type`).click(function(){
+        type = $(this).val();
+        // $(this).attr(`class`, `type-active`);
+    })
+
     var createButtons = function () {
 
         database.ref(`/connectedUsers/${myConnectionKey}/`).set({
             touch_Status: false,
             param1: "",
             param2: "",
+            type: "sine"
         });
 
         database.ref(`/connectedUsers/${myConnectionKey}/`).onDisconnect().remove()
@@ -146,7 +154,7 @@ window.onload = function () {
                             oscillator = myAudioContext.createOscillator();
                             gainNode = myAudioContext.createGain();
 
-                            oscillator.type = 'triangle';
+                            oscillator.type = type;
 
                             gainNode.connect(myAudioContext.destination);
                             oscillator.connect(gainNode);
@@ -211,6 +219,7 @@ window.onload = function () {
                                 touch_Status: touchStatus,
                                 param1: noteValue,
                                 param2: volumeValue,
+                                type: type,
                             });
                         };
 
@@ -243,6 +252,7 @@ window.onload = function () {
                         var remoteVolumeValue;
                         var remoteTouchStatus;
                         var remoteAudioContext;
+                        var remoteType;
                         var remoteOscillator;
                         var remoteGainNode;
                         var playStatus = false;
@@ -257,6 +267,7 @@ window.onload = function () {
                                 remoteNoteValue = snapshot.val().param1;
                                 remoteVolumeLevel = snapshot.val().param2;
                                 remoteTouchStatus = snapshot.val().touch_Status;
+                                remoteType = snapshot.val().type;
 
                                 if (playStatus === false && remoteTouchStatus === true) {
                                     playStatus = true;
@@ -272,7 +283,7 @@ window.onload = function () {
                         SynthPad.buildOscillator = function () {
                             remoteOscillator = remoteAudioContext.createOscillator();
                             remoteGainNode = remoteAudioContext.createGain();
-                            remoteOscillator.type = 'triangle';
+                            remoteOscillator.type = remoteType;
                             remoteGainNode.connect(remoteAudioContext.destination);
                             remoteOscillator.connect(remoteGainNode);
                         };
