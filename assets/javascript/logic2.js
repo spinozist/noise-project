@@ -32,7 +32,7 @@ window.onload = function () {
             touch_Status: false,
             param1: "",
             param2: "",
-            type: "sine"
+            osc_type: "sine"
         });
 
         database.ref(`/connectedUsers/${myConnectionKey}/`).onDisconnect().remove()
@@ -267,7 +267,7 @@ window.onload = function () {
                                 remoteNoteValue = snapshot.val().param1;
                                 remoteVolumeLevel = snapshot.val().param2;
                                 remoteTouchStatus = snapshot.val().touch_Status;
-                                remoteType = snapshot.val().type;
+                                remoteType = snapshot.val().osc_type;
 
                                 if (playStatus === false && remoteTouchStatus === true) {
                                     playStatus = true;

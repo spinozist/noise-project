@@ -33,3 +33,11 @@ html, body {
   border-radius: 5px;
   background-color: red;
 }
+
+.type:active {
+  color: #111;
+  width: 15%;
+  border-color: red;
+  border-radius: 5px;
+  background-color: red;
+}
