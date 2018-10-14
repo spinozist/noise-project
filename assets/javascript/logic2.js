@@ -219,7 +219,7 @@ window.onload = function () {
                                 touch_Status: touchStatus,
                                 param1: noteValue,
                                 param2: volumeValue,
-                                type: type,
+                                osc_type: type,
                             });
                         };
 
