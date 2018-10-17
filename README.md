@@ -1,61 +1,25 @@
-# Project1
+# PROJECT 1: MULTI-USER NOISE MANIPULATOR
 
-**MULTIUSER NOISE MANIPULATOR**
+Want to play with sound? Want to play with friends? Visit our multi-user [Noise Manipulator](https://haydest.github.io/noise-project/)! 
 
-Audio APIs:
-* https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API
-* http://www.sonicapi.com/
-* https://developer.spotify.com/documentation/web-api/
-* https://tonejs.github.io/docs/
+## Getting Started
 
-x,y touch interface:
-* mostly touchpad
-* parameter assigner (i.e. x=frequency; y=amplitude)
-	
-interface converter functions
-* ratio of x or y of touch/click range to ratio of parameter range
-	
-Firebase:
-* play along with other connected users 
+To use the noise manipulator, press the green play button, then use your mouse to click and drag in the oscillator field to manipulate the noise! If anyone else is using the noise manipulator, additional buttons will appear next to yours. Click on these to start hearing what other users are playing!
 
+### Technologies Used
+* [WebAudio API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API)
+* [Materialize CSS Framework](https://materializecss.com/)
+* [Google Firebase](https://firebase.google.com/)
+* [Textures.com](https://www.textures.com/)
 
-Task assignments:
-* Erik Woodworth - Firebase integration
-* AJ Jordan - WebAudio ossilator and other parameter fucntions 
-* Hayden Estes - visual design layout, user validation
+### Languages Used
+* HTML
+* CSS
+* JavaScript
+* jQuery
 
-UI/Code Logic:
-* Enter name
-* Click submit
-    - add "hidden" class to <input> and <button id="submit button">
-    - remove "hidden" class from UI container
-    - initiate Firebase connection
-        * create myConnectionKey variable 
-    - add buttons to "button-box" for each connected user
-        * add id = `play-${connectionKey}` 
-        * add text with user's input name
-        * add value =`${connectionKey}` value
-        * add `off` status
-* Click user button (if status=`off`)
-    - change status to `on`
-    - create audioContext = `audioCtx-${this.val()}`
-    - add a listener in `audioCtx-${this.val()}` for value changes on Firebase in `/connectedUsers/${connectedUserKey}` to change parameter values in created audioContext
-        * touchStatus boolean
-        * oscilator params
-        * audioSource params
-    - if touchStatus = `true`
-        * call the function audioCtx-${connectedUserKey}.play()
-    - if touchStatus = `false`
-        * call the function audioCtx-${connectedUserKey}.stop()
-* Click user button (if status=`on`)
-    - change status to `off`
-    - call the function audioCtx-${connectedUserKey}.stop()
-    - turn off listener to Firebase
-* On mousedown or touchdown in trackpad area
-    - call TouchPad function to set values on Firebase in `/connectedUsers/${connectedUserKey}`
-        * SEE DIAGRAM
-* On mouseup or touchup in trackpad area
-    - set touchStatus = `false`
-* When user disconnects
-    - delete button with id = `play-${connectedUserKey}`
-    - remove `/connectedUsers/${connectedUserKey}` from Firebase
+### Team Members
+* [AJ Jordan](https://github.com/enigmatic-agent-scully)
+* [Hayden Estes](https://github.com/haydest)
+* [Erik Woodworth](https://github.com/spinozist)
+
