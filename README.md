@@ -1,6 +1,6 @@
 # PROJECT 1: MULTI-USER NOISE MANIPULATOR
 
-Want to play with sound? Want to play with friends? Visit our multi-user [Noise Manipulator](https://haydest.github.io/noise-project/)! 
+Want to play with sound? Want to play with friends? Visit our multi-user [Noise Manipulator](https://haydest.github.io/noise-project/)!  We set out to create a web app that allows users to manipulate an oscillator and listen to other users do the same. We succeeded in using Firebase to store and read live cursor-position data, which, when manipulated, alters the frequency and gain (volume) of the audio wave that is created using the WebAudio API. This API uses the user's internal speakers (or other audio output) to produce sounds according to the parameters captured by the mouse position data.
 
 ## Getting Started
 
