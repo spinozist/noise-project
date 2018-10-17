@@ -1,19 +1,8 @@
-/* possible trackpad */
-
 html, body {
   text-align: center;
-
   background: #111;
-
 } 
-
-
 #touchpad, img {
-
-  /* position: absolute;
-  overflow: auto;
-  height: 350px;
-  width: 500px; */
   border-radius: 5%;
   
 }
@@ -40,4 +29,8 @@ html, body {
   border-color: red;
   border-radius: 5px;
   background-color: red;
+}
+
+.container#headerimg {
+  background: url('/assets/images/noise.png');
 }
